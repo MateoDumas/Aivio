@@ -3,7 +3,7 @@ services:
     name: aivio-backend
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt && python -m compileall app
+    buildCommand: pip install -r requirements.txt -r requirements-ml.txt && python -m compileall app
     startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
