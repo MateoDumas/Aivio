@@ -1,4 +1,8 @@
-from fastapi import FastAPI
+from pathlib import Path
+
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 from app.api.routes.auth import router as auth_router
 from app.api.routes.recommendations import router as recommendations_router
@@ -8,6 +12,10 @@ from app.db.session import Base, engine
 
 settings = get_settings()
 app = FastAPI(title=settings.app_name)
+
+# Configuración de templates
+BASE_DIR = Path(__file__).resolve().parent
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
 @app.on_event("startup")
@@ -21,13 +29,9 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.get("/")
-async def root() -> dict[str, str]:
-    return {
-        "message": "Welcome to Aivio API",
-        "docs": "/docs",
-        "health": "/health"
-    }
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
