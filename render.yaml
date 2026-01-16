@@ -1,9 +1,8 @@
 services:
-  # Servicio Web (FastAPI)
   - type: web
     name: aivio-backend
     env: python
-    plan: starter
+    plan: free
     buildCommand: pip install -r requirements.txt && python -m compileall app
     startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
@@ -14,12 +13,10 @@ services:
       - key: JWT_SECRET_KEY
         generateValue: true
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: "3.11.0"
 
 databases:
   - name: aivio-db
-    plan: starter
+    plan: free
     databaseName: aivio
     user: aivio_user
-
-# Nota: Render compila desde el repo. Este archivo ayuda a configurar automáticamente el Blueprints.
