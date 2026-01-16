@@ -46,3 +46,28 @@ async def recommend(
     await db.commit()
     return RecommendationResponse(user_id=current_user.id, recommendations=items)
 
+
+@router.get("/history", response_model=list[RecommendationItem])
+async def get_history(
+    limit: int = 10,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+) -> list[RecommendationItem]:
+    """
+    Obtiene el historial de recomendaciones guardadas para el usuario actual.
+    """
+    from sqlalchemy import select
+    
+    result = await db.execute(
+        select(Recommendation)
+        .where(Recommendation.user_id == current_user.id)
+        .order_by(Recommendation.created_at.desc())
+        .limit(limit)
+    )
+    recommendations = result.scalars().all()
+    
+    return [
+        RecommendationItem(item_id=rec.item_id, score=rec.score)
+        for rec in recommendations
+    ]
+
