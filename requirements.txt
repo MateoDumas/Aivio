@@ -5,6 +5,7 @@ asyncpg
 pydantic
 pydantic-settings
 email-validator
+python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
 alembic
