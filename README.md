@@ -1,73 +1,122 @@
-# Aivio Backend: AI-Powered Recommendation System
+# 🧠 Aivio - Intelligent AI Backend
 
-Backend moderno y escalable construido con **FastAPI**, **PyTorch** y **PostgreSQL**. Diseñado para demostrar una arquitectura de ML profesional lista para producción.
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
-## 🚀 Stack Tecnológico
+Aivio es un backend moderno y escalable diseñado para integrar capacidades de **Inteligencia Artificial** y **Machine Learning** en aplicaciones de producción. Combina la velocidad de FastAPI con la potencia de PyTorch.
+
+🔗 **Live Demo:** [https://aivio-nu.vercel.app](https://aivio-nu.vercel.app)  
+📚 **API Docs:** [https://aivio-nu.vercel.app/docs](https://aivio-nu.vercel.app/docs)
+
+---
+
+## 🚀 Características Principales
+
+- **🤖 Motor de Recomendaciones ML:** Sistema basado en PyTorch que aprende de las interacciones del usuario para sugerir items relevantes.
+- **💬 Chatbot Inteligente:** Asistente virtual integrado capaz de entender contexto y guiar a los usuarios.
+- **📊 Análisis de Sentimiento (NLP):** Procesamiento de lenguaje natural para detectar emociones en textos (Positivo/Negativo/Neutral).
+- **🔒 Seguridad Robusta:** Autenticación completa con JWT (OAuth2 Password Flow) y hashing de contraseñas.
+- **📈 Métricas en Tiempo Real:** Headers de rendimiento (`X-Process-Time`) y monitoreo de salud.
+- **☁️ Multi-Cloud Deploy:** Configurado para desplegarse automáticamente en **Vercel** (Serverless) y **Render** (Contenedores).
+
+---
+
+## 🛠️ Tech Stack
 
 - **Lenguaje:** Python 3.11+
-- **API Framework:** FastAPI
-- **Machine Learning:** PyTorch
-- **Base de Datos:** PostgreSQL
-- **ORM:** SQLAlchemy 2.0 (Async)
-- **Migraciones:** Alembic
-- **Autenticación:** JWT (OAuth2 Password Flow)
+- **Framework Web:** FastAPI
+- **Machine Learning:** PyTorch (CPU optimized for cloud)
+- **Base de Datos:** PostgreSQL (con SQLAlchemy 2.0 Async + Alembic)
+- **Validación:** Pydantic V2
 - **Infraestructura:** Docker & Docker Compose
 
-## 🛠 Instalación Local
+---
 
-1.  **Clonar repositorio:**
-    ```bash
-    git clone <url-del-repo>
-    cd Aivio
-    ```
+## ⚡ Quick Start
 
-2.  **Levantar entorno con Docker Compose:**
-    ```bash
-    docker compose up --build
-    ```
-    Esto iniciará la API en `http://localhost:8000` y una base de datos PostgreSQL.
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/MateoDumas/Aivio.git
+cd Aivio
+```
 
-3.  **Generar migración inicial (si es necesario):**
-    Si estás desarrollando y cambias los modelos:
-    ```bash
-    # Asegúrate de que la DB esté corriendo
-    docker compose exec web alembic revision --autogenerate -m "Cambios en modelos"
-    docker compose exec web alembic upgrade head
-    ```
+### 2. Configurar entorno local
+Crea un archivo `.env` en la raíz:
+```env
+DATABASE_URL=postgresql+asyncpg://user:password@localhost/aivio_db
+SECRET_KEY=tu_clave_secreta_super_segura
+```
+
+### 3. Ejecutar con Docker (Recomendado)
+```bash
+docker-compose up --build
+```
+La API estará disponible en `http://localhost:8000`.
+
+### 4. Instalación Manual
+```bash
+# Crear entorno virtual
+python -m venv venv
+source venv/bin/activate  # o venv\Scripts\activate en Windows
+
+# Instalar dependencias
+pip install -r requirements.txt
+pip install -r requirements-ml.txt
+
+# Ejecutar migraciones
+alembic upgrade head
+
+# Iniciar servidor
+uvicorn app.main:app --reload
+```
+
+---
+
+## 📡 API Usage Examples
+
+### Health Check
+```bash
+curl -X GET "https://aivio-nu.vercel.app/health"
+```
+
+### Análisis de Sentimiento (NLP)
+```bash
+curl -X POST "https://aivio-nu.vercel.app/analysis/sentiment" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "I love using this API, it is amazing!"}'
+```
+
+### Chatbot
+```bash
+curl -X POST "https://aivio-nu.vercel.app/chat" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "¿Qué puedes hacer?"}'
+```
+
+---
 
 ## 🌍 Despliegue
 
-### Opción A: Render (Recomendado)
+### Opción A: Render (Full ML)
+Este proyecto incluye un `render.yaml` listo para usar.
+1. Conecta tu repo a Render.
+2. Render detectará la configuración Blueprints.
+3. Desplegará la base de datos y el servicio web automáticamente.
 
-El proyecto incluye un archivo `render.yaml` para "Infrastructure as Code".
+### Opción B: Vercel (Serverless)
+Optimizado para funcionar en el Free Tier de Vercel.
+1. Importa el proyecto en Vercel.
+2. Vercel usará `vercel.json` y `api/index.py`.
+3. **Nota:** En Vercel, el modelo de PyTorch usa una versión ligera (fallback) para cumplir con los límites de tamaño serverless.
 
-1.  Crea un nuevo **Blueprint Instance** en [Render Dashboard](https://dashboard.render.com/blueprints).
-2.  Conecta este repositorio.
-3.  Render detectará `render.yaml` y desplegará:
-    -   Base de datos PostgreSQL.
-    -   Servicio Web (FastAPI).
-    -   Ejecutará automáticamente las migraciones al iniciar.
+---
 
-### Opción B: Vercel
+## 🤝 Contribución
 
-Configurado mediante `vercel.json`.
-*Nota: El soporte de PyTorch en Serverless puede estar limitado por el tamaño del paquete (250MB).*
+¡Las contribuciones son bienvenidas! Por favor, abre un issue o envía un PR.
 
-1.  Instala Vercel CLI: `npm i -g vercel`
-2.  Ejecuta `vercel` y sigue las instrucciones.
-3.  Configura las variables de entorno `DATABASE_URL` y `JWT_SECRET_KEY`.
+## 📄 Licencia
 
-## 🧠 Endpoints Clave
-
-Documentación interactiva disponible en `/docs` (Swagger UI).
-
--   `POST /auth/register`: Registrar nuevo usuario.
--   `POST /auth/token`: Login (obtiene JWT).
--   `POST /recommendations/`: Obtiene recomendaciones personalizadas usando el modelo PyTorch.
-
-## 📁 Estructura
-
--   `app/api`: Endpoints y lógica de rutas.
--   `app/ml`: Modelos de PyTorch y lógica de inferencia.
--   `app/db`: Modelos SQLAlchemy y sesión de base de datos.
--   `alembic`: Scripts de migración de base de datos.
+MIT License - Creado por [MateoDumas](https://github.com/MateoDumas)
