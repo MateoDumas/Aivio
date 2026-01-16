@@ -21,6 +21,15 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/")
+async def root() -> dict[str, str]:
+    return {
+        "message": "Welcome to Aivio API",
+        "docs": "/docs",
+        "health": "/health"
+    }
+
+
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(recommendations_router, prefix="/recommendations", tags=["recommendations"])
 
