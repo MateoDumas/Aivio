@@ -39,13 +39,21 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     return response
 
-# Configuración de templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
-
+# Configuración de templates
+BASE_DIR = Path(__file__).resolve().parent
+try:
+    templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+except Exception:
+    templates = None
 
 @app.on_event("startup")
 async def on_startup() -> None:
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as e:
+        print(f"Database connection failed: {e}")
+        # No fallamos la app completa para que al menos la home funcione
 
 
 @app.get("/health")
@@ -55,7 +63,19 @@ async def health() -> dict[str, str]:
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    if templates:
+        return templates.TemplateResponse("index.html", {"request": request})
+    else:
+        # Fallback simple si los templates fallan
+        return HTMLResponse(content="""
+        <html>
+            <body style="background:#0f172a; color:white; font-family:sans-serif; text-align:center; padding:50px;">
+                <h1>Aivio API is Running</h1>
+                <p>Templates not loaded properly.</p>
+                <a href="/docs" style="color:#3b82f6;">Go to Documentation</a>
+            </body>
+        </html>
+        """)
 
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
