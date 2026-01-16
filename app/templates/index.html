@@ -4,46 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aivio API - Intelligent Backend</title>
+    <link rel="icon" href="/favicon.ico" type="image/svg+xml">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        /* Theme Variables */
         :root {
-            --primary: #3b82f6;
-            --bg: #0f172a;
-            --text: #f8fafc;
-            --card-bg: #1e293b;
+            --bg-color: #111111;
+            --text-color: #e5e5e5;
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --secondary-bg: #1e1e1e;
+            --card-border: #333333;
+            --text-muted: #a3a3a3;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --success-text: #34d399;
+            --code-bg: #0f172a;
         }
+
+        body.light-mode {
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --secondary-bg: #f3f4f6;
+            --card-border: #e5e7eb;
+            --text-muted: #6b7280;
+            --success-bg: rgba(5, 150, 105, 0.1);
+            --success-text: #059669;
+            --code-bg: #1e293b; /* Keep code dark */
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
             line-height: 1.6;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
+        /* Toggle Button */
+        #theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        #theme-toggle:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
             text-align: center;
         }
+
         header {
-            padding: 4rem 0;
+            padding: 6rem 0 4rem;
         }
+
         h1 {
-            font-size: 3.5rem;
+            font-size: 4rem;
+            font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            background: linear-gradient(to right, #a78bfa, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
         }
+
         .subtitle {
             font-size: 1.5rem;
-            color: #94a3b8;
+            color: var(--text-muted);
             max-width: 600px;
             margin: 0 auto 2rem;
+            font-weight: 300;
         }
+
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -51,21 +104,30 @@
             margin: 4rem 0;
             text-align: left;
         }
+
         .card {
-            background: var(--card-bg);
+            background: var(--secondary-bg);
             padding: 2rem;
             border-radius: 1rem;
-            border: 1px solid #334155;
-            transition: transform 0.2s;
+            border: 1px solid var(--card-border);
+            transition: transform 0.2s, border-color 0.2s;
         }
+
         .card:hover {
             transform: translateY(-5px);
             border-color: var(--primary);
         }
+
         .card h3 {
-            color: #60a5fa;
+            color: var(--primary);
             margin-top: 0;
+            font-size: 1.25rem;
         }
+
+        .card p {
+            color: var(--text-muted);
+        }
+
         .btn {
             display: inline-block;
             background: var(--primary);
@@ -73,99 +135,162 @@
             padding: 1rem 2rem;
             border-radius: 0.5rem;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
             transition: background 0.2s;
             margin: 0.5rem;
         }
+
         .btn:hover {
-            background: #2563eb;
+            background: var(--primary-hover);
         }
+
         .btn-outline {
             background: transparent;
-            border: 2px solid #334155;
+            border: 2px solid var(--card-border);
+            color: var(--text-color);
         }
+
         .btn-outline:hover {
-            border-color: var(--text);
+            border-color: var(--text-color);
             background: rgba(255,255,255,0.05);
         }
+        
+        body.light-mode .btn-outline:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
         .status-badge {
             display: inline-flex;
             align-items: center;
-            background: rgba(16, 185, 129, 0.1);
-            color: #34d399;
+            background: var(--success-bg);
+            color: var(--success-text);
             padding: 0.5rem 1rem;
             border-radius: 2rem;
             font-size: 0.875rem;
             margin-bottom: 2rem;
+            font-weight: 500;
         }
-        .dot {
+
+        .status-dot {
             width: 8px;
             height: 8px;
-            background: currentColor;
+            background-color: currentColor;
             border-radius: 50%;
             margin-right: 0.5rem;
         }
+
+        #quickstart {
+            text-align: left;
+            background: var(--secondary-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--card-border);
+            margin-top: 4rem;
+        }
+        
+        #quickstart h2 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+        
+        #quickstart p {
+            color: var(--text-muted);
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            border: 1px solid #334155;
+        }
+        
+        .code-comment {
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .code-command {
+            color: #34d399;
+            display: block;
+        }
+
     </style>
 </head>
 <body>
+    <button id="theme-toggle">🌙 Dark Mode</button>
+
     <div class="container">
         <header>
             <div class="status-badge">
-                <div class="dot"></div>
+                <span class="status-dot"></span>
                 Systems Operational
             </div>
             <h1>Aivio API</h1>
             <p class="subtitle">
-                Backend inteligente de próxima generación impulsado por FastAPI y PyTorch.
-                Diseñado para escalabilidad, rendimiento y ML en tiempo real.
+                Backend inteligente de alto rendimiento con integración nativa de Machine Learning y NLP.
             </p>
-            <div class="actions">
+            <div>
                 <a href="/docs" class="btn">Explorar Documentación</a>
-                <a href="/health" class="btn btn-outline">Check Health</a>
+                <a href="https://github.com/MateoDumas/Aivio" target="_blank" class="btn btn-outline">Ver Código</a>
             </div>
         </header>
 
-        <div class="features">
+        <section class="features">
             <div class="card">
-                <h3>🚀 High Performance</h3>
-                <p>Construido sobre FastAPI y Starlette para un rendimiento asíncrono excepcional, listo para cargas de producción.</p>
-            </div>
-            <div class="card">
-                <h3>🧠 AI-Powered</h3>
-                <p>Motor de inferencia integrado con PyTorch para recomendaciones inteligentes y procesamiento de datos en tiempo real.</p>
+                <h3>🔐 Autenticación Segura</h3>
+                <p>Sistema completo de usuarios con JWT y OAuth2 Password Flow. Protección robusta para tus endpoints.</p>
             </div>
             <div class="card">
-                <h3>🛡️ Secure by Default</h3>
-                <p>Autenticación robusta JWT OAuth2, validación de esquemas Pydantic y migraciones de base de datos seguras.</p>
+                <h3>🤖 Recomendaciones ML</h3>
+                <p>Motor de inferencia PyTorch integrado para sugerencias personalizadas en tiempo real.</p>
             </div>
             <div class="card">
-                <h3>💬 Smart Chatbot</h3>
-                <p>Asistente virtual integrado capaz de responder preguntas sobre la API y guiar a los usuarios.</p>
-            </div>
-        </div>
-
-        <section id="quickstart" style="text-align: left; background: #1e293b; padding: 2rem; border-radius: 1rem; margin-top: 4rem;">
-            <h2 style="color: #60a5fa; margin-top: 0;">⚡ Quick Start for Developers</h2>
-            <p>Consume la API directamente desde tu terminal o aplicación frontend.</p>
-            
-            <div style="background: #0f172a; padding: 1.5rem; border-radius: 0.5rem; font-family: monospace; overflow-x: auto; margin-bottom: 1.5rem;">
-                <div style="color: #94a3b8; margin-bottom: 0.5rem;"># 1. Check API Status</div>
-                <code style="color: #34d399;">curl -X GET "https://aivio-backend.onrender.com/health"</code>
-            </div>
-
-            <div style="background: #0f172a; padding: 1.5rem; border-radius: 0.5rem; font-family: monospace; overflow-x: auto;">
-                <div style="color: #94a3b8; margin-bottom: 0.5rem;"># 2. Analyze Sentiment (No Auth Required)</div>
-                <code style="color: #34d399;">
-curl -X POST "https://aivio-backend.onrender.com/analysis/sentiment" \<br>
-&nbsp;&nbsp;-H "Content-Type: application/json" \<br>
-&nbsp;&nbsp;-d '{"text": "I love using Aivio, it makes AI easy!"}'
-                </code>
+                <h3>💬 Chatbot Inteligente</h3>
+                <p>Asistente virtual capaz de entender contexto y responder preguntas sobre el sistema.</p>
             </div>
         </section>
 
-        <footer>
-            <p style="color: #64748b;">&copy; 2024 Aivio Project. Deployed on Vercel & Render.</p>
-        </footer>
+        <section id="quickstart">
+            <h2>⚡ Quick Start for Developers</h2>
+            <p>Consume la API directamente desde tu terminal o aplicación frontend.</p>
+            
+            <div class="code-block">
+                <span class="code-comment"># 1. Check API Status</span>
+                <span class="code-command">curl -X GET "https://aivio-backend.onrender.com/health"</span>
+            </div>
+            
+            <div class="code-block">
+                <span class="code-comment"># 2. Get AI Prediction (Auth required for full features)</span>
+                <span class="code-command">curl -X POST "https://aivio-backend.onrender.com/recommendations/predict" \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": 1, "items": ["item_1", "item_2"]}'</span>
+            </div>
+        </section>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var btn = document.getElementById("theme-toggle");
+            
+            // Check local storage
+            var currentTheme = localStorage.getItem("theme") || "dark";
+            if (currentTheme === "light") {
+                document.body.classList.add("light-mode");
+                btn.innerText = "☀️ Light Mode";
+            }
+
+            // Toggle Event
+            btn.addEventListener("click", function() {
+                document.body.classList.toggle("light-mode");
+                var theme = document.body.classList.contains("light-mode") ? "light" : "dark";
+                btn.innerText = theme === "light" ? "☀️ Light Mode" : "🌙 Dark Mode";
+                localStorage.setItem("theme", theme);
+            });
+        });
+    </script>
 </body>
 </html>

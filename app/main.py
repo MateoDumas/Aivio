@@ -1,7 +1,7 @@
 import time
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +13,7 @@ from app.api.routes.analysis import router as analysis_router
 from app.api.routes.chat import router as chat_router
 from app.config import get_settings
 from app.db.session import Base, engine
-from app.docs import tags_metadata, description as api_description, custom_css
+from app.docs import tags_metadata, description as api_description, custom_css, custom_js
 
 
 settings = get_settings()
@@ -87,12 +87,32 @@ async def custom_swagger_ui_html():
             "syntaxHighlight.theme": "obsidian"
         }
     )
-    # Inyectar CSS personalizado
+    # Inyectar CSS y JS personalizados
     body = html.body.decode("utf-8")
     custom_style = f"<style>{custom_css}</style>"
+    
     # Insertar estilo antes de cerrar el head
-    new_body = body.replace("</head>", f"{custom_style}</head>")
-    return HTMLResponse(new_body)
+    body = body.replace("</head>", f"{custom_style}</head>")
+    # Insertar script antes de cerrar el body
+    body = body.replace("</body>", f"{custom_js}</body>")
+    
+    return HTMLResponse(body)
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    """
+    Devuelve un favicon SVG generado dinámicamente (Cerebro Violeta).
+    """
+    svg_content = """
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <style>
+        .brain { fill: #8b5cf6; }
+      </style>
+      <path class="brain" d="M50 10c-15 0-28 8-34 20-3 0-6 2-8 5-2 3-2 7 0 10 1 2 3 3 5 4 0 3 1 6 2 9-2 2-3 5-3 8s1 6 4 8c1 3 4 5 7 6 4 9 14 15 27 15s23-6 27-15c3-1 6-3 7-6 3-2 4-5 4-8s-1-6-3-8c1-3 2-6 2-9 2-1 4-2 5-4 2-3 2-7 0-10-2-3-5-5-8-5-6-12-19-20-34-20zm0 10c10 0 19 6 23 14h-46c4-8 13-14 23-14z"/>
+    </svg>
+    """
+    return Response(content=svg_content, media_type="image/svg+xml")
 
 
 @app.get("/health", tags=["system"])
@@ -108,10 +128,14 @@ async def root(request: Request):
         # Fallback simple si los templates fallan
         return HTMLResponse(content="""
         <html>
-            <body style="background:#0f172a; color:white; font-family:sans-serif; text-align:center; padding:50px;">
-                <h1>Aivio API is Running</h1>
+            <head>
+                <title>Aivio API</title>
+                <link rel="icon" href="/favicon.ico" type="image/svg+xml">
+            </head>
+            <body style="background:#111111; color:white; font-family:sans-serif; text-align:center; padding:50px;">
+                <h1 style="color:#8b5cf6;">🧠 Aivio API is Running</h1>
                 <p>Templates not loaded properly.</p>
-                <a href="/docs" style="color:#3b82f6;">Go to Documentation</a>
+                <a href="/docs" style="color:#a78bfa;">Go to Documentation</a>
             </body>
         </html>
         """)

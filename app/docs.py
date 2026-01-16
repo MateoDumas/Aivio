@@ -22,8 +22,8 @@ tags_metadata = [
 # Descripción detallada (Markdown soportado)
 description = """
 <div style="text-align: center; padding: 20px;">
-    <h1 style="color: #8b5cf6; font-weight: bold; font-size: 2.5rem; margin-bottom: 10px;">🧠 Aivio API</h1>
-    <p style="font-size: 1.2rem; color: #d1d5db;">Intelligent Backend for Modern AI Applications</p>
+    <h1 style="color: var(--primary); font-weight: bold; font-size: 2.5rem; margin-bottom: 10px;">🧠 Aivio API</h1>
+    <p style="font-size: 1.2rem; opacity: 0.8;">Intelligent Backend for Modern AI Applications</p>
 </div>
 
 Bienvenido a la documentación interactiva de **Aivio**. Este backend integra Inteligencia Artificial y Machine Learning directamente en el flujo de trabajo de tu aplicación.
@@ -40,139 +40,233 @@ Bienvenido a la documentación interactiva de **Aivio**. Este backend integra In
 💡 **Tip:** Usa el botón **Authorize** con tus credenciales para probar los endpoints protegidos.
 """
 
-# Custom CSS para tema "Violet/Dark Modern" (Evitando el Azul/Negro repetitivo)
+# Custom CSS con Variables y Soporte Light/Dark
 custom_css = """
-/* Modern Violet Dark Theme */
+/* Theme Variables */
+:root {
+    --bg-color: #111111;
+    --text-color: #e5e5e5;
+    --primary: #8b5cf6;
+    --primary-soft: rgba(139, 92, 246, 0.1);
+    --secondary-bg: #1e1e1e;
+    --border-color: #333333;
+    --success: #10b981;
+    --success-soft: rgba(16, 185, 129, 0.1);
+    --get-method: #10b981;
+    --post-method: #8b5cf6;
+    --put-method: #f59e0b;
+    --delete-method: #ef4444;
+}
+
+body.light-mode {
+    --bg-color: #ffffff;
+    --text-color: #1f2937;
+    --primary: #7c3aed;
+    --primary-soft: rgba(124, 58, 237, 0.1);
+    --secondary-bg: #f3f4f6;
+    --border-color: #e5e7eb;
+    --success: #059669;
+    --success-soft: rgba(5, 150, 105, 0.1);
+    --get-method: #059669;
+    --post-method: #7c3aed;
+    --put-method: #d97706;
+    --delete-method: #dc2626;
+}
+
+/* Global Styles */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
 
 body {
-    background-color: #111111; /* Pure Dark Grey */
-    color: #e5e5e5;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Topbar */
 .swagger-ui .topbar {
-    background-color: #111111;
-    border-bottom: 1px solid #2d2d2d;
+    background-color: var(--secondary-bg);
+    border-bottom: 1px solid var(--border-color);
 }
 .swagger-ui .topbar a {
     display: none; /* Hide default logo */
 }
 
+/* Toggle Button Style */
+#theme-toggle {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    z-index: 9999;
+}
+#theme-toggle:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+}
+
 /* Info Section */
 .swagger-ui .info .title {
-    color: #a78bfa !important; /* Soft Violet */
+    color: var(--primary) !important;
     font-family: 'Inter', sans-serif;
 }
 .swagger-ui .info p, .swagger-ui .info li {
-    color: #d4d4d4;
+    color: var(--text-color);
+}
+.swagger-ui .info h1, .swagger-ui .info h2, .swagger-ui .info h3, .swagger-ui .info h4, .swagger-ui .info h5 {
+    color: var(--text-color);
 }
 
-/* Operations / Endpoints */
+/* Operations */
 .swagger-ui .opblock {
     border-radius: 8px;
     box-shadow: none;
-    border: none;
+    border: 1px solid transparent;
     margin-bottom: 15px;
+    background: var(--secondary-bg);
 }
 
-/* GET Method */
+/* GET */
 .swagger-ui .opblock.opblock-get {
-    background: rgba(16, 185, 129, 0.1); /* Emerald Tint */
-    border-left: 4px solid #10b981; /* Emerald */
-}
-.swagger-ui .opblock.opblock-get .opblock-summary {
-    border-color: #10b981;
+    background: var(--success-soft);
+    border-color: var(--success);
 }
 .swagger-ui .opblock.opblock-get .opblock-summary-method {
-    background: #10b981;
+    background: var(--success);
 }
 
-/* POST Method */
+/* POST */
 .swagger-ui .opblock.opblock-post {
-    background: rgba(139, 92, 246, 0.1); /* Violet Tint */
-    border-left: 4px solid #8b5cf6; /* Violet */
-}
-.swagger-ui .opblock.opblock-post .opblock-summary {
-    border-color: #8b5cf6;
+    background: var(--primary-soft);
+    border-color: var(--primary);
 }
 .swagger-ui .opblock.opblock-post .opblock-summary-method {
-    background: #8b5cf6;
+    background: var(--primary);
 }
 
-/* PUT/DELETE/PATCH adjustments */
+/* PUT */
 .swagger-ui .opblock.opblock-put {
     background: rgba(245, 158, 11, 0.1);
-    border-left: 4px solid #f59e0b;
+    border-color: var(--put-method);
 }
-.swagger-ui .opblock.opblock-delete {
-    background: rgba(239, 68, 68, 0.1);
-    border-left: 4px solid #ef4444;
+.swagger-ui .opblock.opblock-put .opblock-summary-method {
+    background: var(--put-method);
 }
 
-/* Text Colors in Operations */
+/* DELETE */
+.swagger-ui .opblock.opblock-delete {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--delete-method);
+}
+.swagger-ui .opblock.opblock-delete .opblock-summary-method {
+    background: var(--delete-method);
+}
+
+/* Summary Texts */
 .swagger-ui .opblock .opblock-summary-operation-id, 
 .swagger-ui .opblock .opblock-summary-path, 
 .swagger-ui .opblock .opblock-summary-path__deprecated {
-    color: #f3f4f6 !important;
+    color: var(--text-color) !important;
     font-weight: 500;
 }
 .swagger-ui .opblock .opblock-summary-description {
-    color: #9ca3af;
+    color: var(--text-color);
+    opacity: 0.8;
 }
 
 /* Schema & Models */
 .swagger-ui .scheme-container {
-    background-color: #171717;
+    background-color: var(--secondary-bg);
     box-shadow: none;
-    border: 1px solid #262626;
+    border: 1px solid var(--border-color);
 }
 .swagger-ui .model {
-    color: #e5e5e5;
+    color: var(--text-color);
 }
 .swagger-ui .model-title {
-    color: #a78bfa; /* Violet title for models */
+    color: var(--primary);
 }
 .swagger-ui table.model tbody tr td:first-of-type {
-    color: #d1d5db;
+    color: var(--text-color);
+    opacity: 0.7;
 }
 
 /* Inputs & Forms */
 .swagger-ui select {
-    background-color: #262626;
-    color: white;
-    border: 1px solid #404040;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
-.swagger-ui input[type=text], .swagger-ui textarea {
-    background-color: #262626;
-    color: white;
-    border: 1px solid #404040;
+.swagger-ui input[type=text], .swagger-ui textarea, .swagger-ui input[type=password] {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 .swagger-ui .btn {
-    background-color: #262626;
-    color: #e5e5e5;
-    border: 1px solid #404040;
+    background-color: var(--secondary-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 .swagger-ui .btn.execute {
-    background-color: #8b5cf6;
+    background-color: var(--primary);
     color: white;
-    border-color: #8b5cf6;
+    border-color: var(--primary);
 }
 .swagger-ui .btn.authorize {
-    color: #8b5cf6;
-    border-color: #8b5cf6;
+    color: var(--primary);
+    border-color: var(--primary);
 }
 .swagger-ui .btn.authorize svg {
-    fill: #8b5cf6;
+    fill: var(--primary);
 }
 
 /* Tags */
 .swagger-ui .opblock-tag {
-    color: #e5e5e5;
-    border-bottom: 1px solid #262626;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
 }
 .swagger-ui .opblock-tag small {
-    color: #a3a3a3;
+    color: var(--text-color);
+    opacity: 0.6;
 }
+
+/* Markdown */
+.swagger-ui .markdown p, .swagger-ui .markdown li {
+    color: var(--text-color);
+}
+"""
+
+# JavaScript para el Toggle (Inyectado al final del body)
+custom_js = """
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Create Toggle Button
+        var btn = document.createElement("button");
+        btn.id = "theme-toggle";
+        btn.innerText = "🌙 Dark Mode";
+        document.body.appendChild(btn);
+        
+        // Check local storage
+        var currentTheme = localStorage.getItem("theme") || "dark";
+        if (currentTheme === "light") {
+            document.body.classList.add("light-mode");
+            btn.innerText = "☀️ Light Mode";
+        }
+
+        // Toggle Event
+        btn.addEventListener("click", function() {
+            document.body.classList.toggle("light-mode");
+            var theme = document.body.classList.contains("light-mode") ? "light" : "dark";
+            btn.innerText = theme === "light" ? "☀️ Light Mode" : "🌙 Dark Mode";
+            localStorage.setItem("theme", theme);
+        });
+    });
+</script>
 """
