@@ -11,3 +11,4 @@ passlib[bcrypt]
 alembic
 psycopg2-binary
 jinja2
+slowapi

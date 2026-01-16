@@ -1,11 +1,18 @@
 import time
 from pathlib import Path
 
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, Response, Depends
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
+
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
 from app.api.routes.auth import router as auth_router
 from app.api.routes.recommendations import router as recommendations_router
@@ -14,9 +21,14 @@ from app.api.routes.chat import router as chat_router
 from app.config import get_settings
 from app.db.session import Base, engine
 from app.docs import tags_metadata, description as api_description, custom_css, custom_js
+from sqlalchemy import text
 
 
 settings = get_settings()
+
+# Rate Limiter Configuration
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(
     title="Aivio API",
     description=api_description,
@@ -35,7 +47,23 @@ app = FastAPI(
     },
 )
 
-# Configuración CORS (Permisiva para desarrollo/demo)
+# --- Middlewares ---
+
+# 1. Rate Limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
+
+# 2. Trusted Host (Security)
+app.add_middleware(
+    TrustedHostMiddleware, 
+    allowed_hosts=["*"] # Ajustar en producción a dominios reales
+)
+
+# 3. GZip Compression (Performance)
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+# 4. CORS (Permisiva para desarrollo/demo)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # En producción, restringir a dominios específicos
@@ -116,8 +144,24 @@ async def favicon():
 
 
 @app.get("/health", tags=["system"])
-async def health() -> dict[str, str]:
-    return {"status": "ok"}
+@limiter.limit("5/minute")
+async def health(request: Request) -> dict[str, str]:
+    """
+    Health check extendido. Verifica también la conexión a BD.
+    """
+    db_status = "unknown"
+    try:
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+            db_status = "connected"
+    except Exception as e:
+        db_status = f"disconnected: {str(e)}"
+        
+    return {
+        "status": "ok", 
+        "database": db_status,
+        "version": settings.VERSION if hasattr(settings, "VERSION") else "1.0.0"
+    }
 
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)

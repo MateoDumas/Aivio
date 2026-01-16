@@ -92,11 +92,17 @@ body {
     display: none; /* Hide default logo */
 }
 
-/* Toggle Button Style */
-#theme-toggle {
+/* Buttons Container (Theme Toggle & Back to Home) */
+#custom-buttons {
     position: absolute;
     top: 15px;
     right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 9999;
+}
+
+.custom-btn {
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-color);
@@ -104,12 +110,29 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
     transition: all 0.2s;
-    z-index: 9999;
+    display: flex;
+    align-items: center;
 }
-#theme-toggle:hover {
+
+.custom-btn:hover {
     background: var(--primary-soft);
     border-color: var(--primary);
+    color: var(--text-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #custom-buttons {
+        position: static;
+        margin: 10px;
+        justify-content: center;
+    }
+    .swagger-ui .info {
+        margin: 20px;
+    }
 }
 
 /* Info Section */
@@ -243,28 +266,42 @@ body {
 }
 """
 
-# JavaScript para el Toggle (Inyectado al final del body)
+# JavaScript para Toggle y Navegación
 custom_js = """
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Create Toggle Button
-        var btn = document.createElement("button");
-        btn.id = "theme-toggle";
-        btn.innerText = "🌙 Dark Mode";
-        document.body.appendChild(btn);
+        // Container for buttons
+        var container = document.createElement("div");
+        container.id = "custom-buttons";
+        
+        // Back to Home Button
+        var homeBtn = document.createElement("a");
+        homeBtn.innerText = "⬅️ Back to Home";
+        homeBtn.className = "custom-btn";
+        homeBtn.href = "/";
+        
+        // Theme Toggle Button
+        var themeBtn = document.createElement("button");
+        themeBtn.innerText = "🌙 Dark Mode";
+        themeBtn.className = "custom-btn";
+        
+        // Append buttons
+        container.appendChild(homeBtn);
+        container.appendChild(themeBtn);
+        document.body.appendChild(container);
         
         // Check local storage
         var currentTheme = localStorage.getItem("theme") || "dark";
         if (currentTheme === "light") {
             document.body.classList.add("light-mode");
-            btn.innerText = "☀️ Light Mode";
+            themeBtn.innerText = "☀️ Light Mode";
         }
 
         // Toggle Event
-        btn.addEventListener("click", function() {
+        themeBtn.addEventListener("click", function() {
             document.body.classList.toggle("light-mode");
             var theme = document.body.classList.contains("light-mode") ? "light" : "dark";
-            btn.innerText = theme === "light" ? "☀️ Light Mode" : "🌙 Dark Mode";
+            themeBtn.innerText = theme === "light" ? "☀️ Light Mode" : "🌙 Dark Mode";
             localStorage.setItem("theme", theme);
         });
     });
