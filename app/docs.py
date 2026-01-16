@@ -22,7 +22,8 @@ tags_metadata = [
 # Descripción detallada (Markdown soportado)
 description = """
 <div style="text-align: center; padding: 20px;">
-    <h1 style="color: var(--primary); font-weight: bold; font-size: 2.5rem; margin-bottom: 10px;">🧠 Aivio API</h1>
+    <img src="/favicon.svg" alt="Aivio Logo" style="width: 100px; height: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));">
+    <h1 style="color: var(--primary); font-weight: bold; font-size: 2.5rem; margin-bottom: 10px;">Aivio API</h1>
     <p style="font-size: 1.2rem; opacity: 0.8;">Intelligent Backend for Modern AI Applications</p>
 </div>
 

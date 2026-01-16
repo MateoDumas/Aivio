@@ -108,7 +108,7 @@ async def custom_swagger_ui_html():
         openapi_url=app.openapi_url,
         title=app.title + " - Docs",
         oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
-        swagger_favicon_url="/favicon.ico",
+        swagger_favicon_url="/favicon.svg",
         swagger_ui_parameters={
             "defaultModelsExpandDepth": -1, # Colapsar modelos por defecto
             "docExpansion": "list",         # Mostrar lista expandida
@@ -128,8 +128,8 @@ async def custom_swagger_ui_html():
     return HTMLResponse(body)
 
 
-@app.get("/favicon.ico", include_in_schema=False)
-async def favicon():
+@app.get("/favicon.svg", include_in_schema=False)
+async def favicon_svg():
     """
     Devuelve un favicon SVG generado dinámicamente (Aivio Hex-Brain).
     """
@@ -180,6 +180,10 @@ async def favicon():
     """
     return Response(content=svg_content, media_type="image/svg+xml")
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon_ico():
+    return await favicon_svg()
+
 
 @app.get("/health", tags=["system"])
 @limiter.limit("5/minute")
@@ -212,10 +216,10 @@ async def root(request: Request):
         <html>
             <head>
                 <title>Aivio API</title>
-                <link rel="icon" href="/favicon.ico" type="image/svg+xml">
+                <link rel="icon" href="/favicon.svg" type="image/svg+xml">
             </head>
             <body style="background:#111111; color:white; font-family:sans-serif; text-align:center; padding:50px;">
-                <h1 style="color:#8b5cf6;">🧠 Aivio API is Running</h1>
+                <h1 style="color:#8b5cf6;">Aivio API is Running</h1>
                 <p>Templates not loaded properly.</p>
                 <a href="/docs" style="color:#a78bfa;">Go to Documentation</a>
             </body>
