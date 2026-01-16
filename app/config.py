@@ -1,4 +1,4 @@
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,7 +13,20 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
 
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def assemble_db_connection(cls, v: str | None) -> str:
+        if not v:
+            # Fallback to default if somehow None is passed (though default usually handles this)
+            return "postgresql+asyncpg://postgres:postgres@db:5432/aivio"
+        
+        # Render provides postgres:// or postgresql://, we need postgresql+asyncpg://
+        if v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql+asyncpg://", 1)
+        if v.startswith("postgresql://") and not v.startswith("postgresql+asyncpg://"):
+            return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return v
+
 
 def get_settings() -> Settings:
     return Settings()
-
