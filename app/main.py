@@ -216,7 +216,7 @@ async def root(request: Request):
         <html>
             <head>
                 <title>Aivio API</title>
-                <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+                <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
             </head>
             <body style="background:#111111; color:white; font-family:sans-serif; text-align:center; padding:50px;">
                 <h1 style="color:#8b5cf6;">Aivio API is Running</h1>
