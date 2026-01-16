@@ -10,6 +10,5 @@ python-jose[cryptography]
 passlib[bcrypt]
 alembic
 psycopg2-binary
---extra-index-url https://download.pytorch.org/whl/cpu
 torch
 numpy
