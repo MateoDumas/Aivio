@@ -1,19 +1,8 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/index.py",
-      "use": "@vercel/python"
+      "source": "/(.*)",
+      "destination": "/api/index.py"
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "api/index.py"
-    }
-  ],
-  "env": {
-    "DATABASE_URL": "postgresql+asyncpg://user:pass@host/db",
-    "JWT_SECRET_KEY": "changeme"
-  }
+  ]
 }
