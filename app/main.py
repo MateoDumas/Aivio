@@ -108,6 +108,7 @@ async def custom_swagger_ui_html():
         openapi_url=app.openapi_url,
         title=app.title + " - Docs",
         oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+        swagger_favicon_url="/favicon.ico",
         swagger_ui_parameters={
             "defaultModelsExpandDepth": -1, # Colapsar modelos por defecto
             "docExpansion": "list",         # Mostrar lista expandida
@@ -130,14 +131,51 @@ async def custom_swagger_ui_html():
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     """
-    Devuelve un favicon SVG generado dinámicamente (Cerebro Violeta).
+    Devuelve un favicon SVG generado dinámicamente (Aivio Hex-Brain).
     """
     svg_content = """
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-      <style>
-        .brain { fill: #8b5cf6; }
-      </style>
-      <path class="brain" d="M50 10c-15 0-28 8-34 20-3 0-6 2-8 5-2 3-2 7 0 10 1 2 3 3 5 4 0 3 1 6 2 9-2 2-3 5-3 8s1 6 4 8c1 3 4 5 7 6 4 9 14 15 27 15s23-6 27-15c3-1 6-3 7-6 3-2 4-5 4-8s-1-6-3-8c1-3 2-6 2-9 2-1 4-2 5-4 2-3 2-7 0-10-2-3-5-5-8-5-6-12-19-20-34-20zm0 10c10 0 19 6 23 14h-46c4-8 13-14 23-14z"/>
+    <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+      
+      <!-- Fondo oscuro squircle (cuadrado redondeado) -->
+      <rect x="5" y="5" width="90" height="90" rx="22" fill="#0f172a" stroke="#334155" stroke-width="2" />
+      
+      <!-- Estructura Hexagonal / Neuronal -->
+      <g filter="url(#glow)" transform="translate(50, 50)">
+        <!-- Hexágono exterior -->
+        <path d="M0 -30 L26 -15 L26 15 L0 30 L-26 15 L-26 -15 Z" fill="none" stroke="url(#grad)" stroke-width="2.5" opacity="0.8" />
+        
+        <!-- Conexiones internas al núcleo -->
+        <line x1="0" y1="0" x2="0" y2="-30" stroke="url(#grad)" stroke-width="1.5" />
+        <line x1="0" y1="0" x2="26" y2="-15" stroke="url(#grad)" stroke-width="1.5" />
+        <line x1="0" y1="0" x2="26" y2="15" stroke="url(#grad)" stroke-width="1.5" />
+        <line x1="0" y1="0" x2="0" y2="30" stroke="url(#grad)" stroke-width="1.5" />
+        <line x1="0" y1="0" x2="-26" y2="15" stroke="url(#grad)" stroke-width="1.5" />
+        <line x1="0" y1="0" x2="-26" y2="-15" stroke="url(#grad)" stroke-width="1.5" />
+        
+        <!-- Núcleo de IA -->
+        <circle cx="0" cy="0" r="7" fill="url(#grad)" />
+        
+        <!-- Nodos periféricos -->
+        <circle cx="0" cy="-30" r="3" fill="#fff" />
+        <circle cx="26" cy="-15" r="3" fill="#fff" />
+        <circle cx="26" cy="15" r="3" fill="#fff" />
+        <circle cx="0" cy="30" r="3" fill="#fff" />
+        <circle cx="-26" cy="15" r="3" fill="#fff" />
+        <circle cx="-26" cy="-15" r="3" fill="#fff" />
+      </g>
     </svg>
     """
     return Response(content=svg_content, media_type="image/svg+xml")
