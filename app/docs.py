@@ -77,6 +77,66 @@ Utiliza el botón **Authorize** y pega tu `access_token` como `Bearer <token>` p
 }
 ```
 
+#### Tabla de parámetros (request)
+
+| Campo    | Tipo        | Descripción                                   |
+|----------|-------------|-----------------------------------------------|
+| item_ids | array[int]  | IDs de items candidatos a recomendar.         |
+
+#### Tabla de respuesta
+
+| Campo           | Tipo                     | Descripción                                    |
+|-----------------|--------------------------|------------------------------------------------|
+| user_id         | int                      | ID del usuario autenticado.                    |
+| recommendations | array[RecommendationItem]| Lista ordenada de recomendaciones para el user |
+| item_id         | int                      | ID del item recomendado (por elemento).        |
+| score           | float                    | Puntuación de relevancia entre 0 y 1.          |
+
+#### Ejemplos por lenguaje
+
+**cURL**
+
+```bash
+curl -X POST "https://aivio-backend.onrender.com/recommendations/" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"item_ids": [1, 2, 3, 4]}'
+```
+
+**Python (requests)**
+
+```python
+import requests
+
+url = "https://aivio-backend.onrender.com/recommendations/"
+headers = {
+    "Authorization": "Bearer <token>",
+    "Content-Type": "application/json",
+}
+payload = {"item_ids": [1, 2, 3, 4]}
+
+response = requests.post(url, json=payload, headers=headers, timeout=10)
+print(response.status_code, response.json())
+```
+
+**JavaScript (fetch)**
+
+```javascript
+const url = "https://aivio-backend.onrender.com/recommendations/";
+
+fetch(url, {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer <token>",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ item_ids: [1, 2, 3, 4] }),
+})
+  .then((res) => res.json())
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err));
+```
+
 ### 3. Análisis de Sentimiento (NLP)
 - Endpoint: `POST /analysis/sentiment`
 - Auth: **No requerida**
@@ -98,6 +158,21 @@ Utiliza el botón **Authorize** y pega tu `access_token` como `Bearer <token>` p
   "word_count": 9
 }
 ```
+
+#### Tabla de parámetros (request)
+
+| Campo | Tipo   | Descripción              |
+|-------|--------|--------------------------|
+| text  | string | Texto libre a analizar.  |
+
+#### Tabla de respuesta
+
+| Campo      | Tipo        | Descripción                                      |
+|------------|-------------|--------------------------------------------------|
+| sentiment  | string      | `positive`, `negative` o `neutral`.              |
+| confidence | float       | Confianza asociada al sentimiento detectado.     |
+| keywords   | array[str]  | Palabras clave extraídas del texto.              |
+| word_count | int         | Número total de palabras analizadas.             |
 
 ### 4. Chatbot Inteligente
 - Endpoint: `POST /chat`
@@ -124,6 +199,21 @@ Utiliza el botón **Authorize** y pega tu `access_token` como `Bearer <token>` p
   ]
 }
 ```
+
+#### Tabla de parámetros (request)
+
+| Campo   | Tipo        | Descripción                                    |
+|---------|-------------|------------------------------------------------|
+| message | string      | Mensaje del usuario para el chatbot.           |
+| context | string/null | Contexto opcional para ajustar la respuesta.   |
+
+#### Tabla de respuesta
+
+| Campo             | Tipo        | The Descripción                                   |
+|-------------------|-------------|---------------------------------------------------|
+| response          | string      | Mensaje generado por el chatbot.                  |
+| intent            | string      | Intención detectada (greeting, help, etc.).       |
+| suggested_actions | array[str]  | Acciones sugeridas para continuar la interacción. |
 
 ## 🔢 Versionado de la API
 
@@ -159,6 +249,15 @@ Puedes consumir cualquier endpoint directamente con `curl`, por ejemplo:
 ```bash
 curl -X POST "https://aivio-backend.onrender.com/chat" -H "Content-Type: application/json" -d "{\"message\": \"Hola Aivio\", \"context\": \"sdk_example\"}"
 ```
+
+## ⚠️ Códigos de error comunes
+
+| Código | Cuándo aparece                                           | Ejemplo de respuesta                                         |
+|--------|----------------------------------------------------------|--------------------------------------------------------------|
+| 400    | Datos de entrada inválidos (por ejemplo, texto vacío).   | `{"detail": "Text cannot be empty"}`                         |
+| 401    | Falta el token JWT o es inválido/expirado.               | `{"detail": "Not authenticated"}`                            |
+| 422    | Error de validación de campos (tipos o requeridos).      | `{"detail": [...lista de errores por campo...]}`             |
+| 500    | Error inesperado en el servidor.                         | `{"detail": "Internal server error. Please try again later."}` |
 
 ---
 
