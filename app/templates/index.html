@@ -117,6 +117,29 @@
             font-weight: 300;
         }
 
+        .value-prop {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 999px;
+            background: rgba(139, 92, 246, 0.12);
+            color: var(--text-color);
+            font-size: 0.95rem;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .badge-row img {
+            height: 24px;
+        }
+
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -332,6 +355,7 @@
             border-radius: 1rem;
             border: 1px solid var(--card-border);
             padding: 1.5rem;
+            overflow: hidden;
         }
 
         .demo-card h3 {
@@ -343,6 +367,77 @@
 
         .demo-card .code-block {
             margin-bottom: 0;
+        }
+
+        .screenshot-header {
+            height: 10px;
+            border-radius: 0.75rem 0.75rem 0 0;
+            background: linear-gradient(90deg, #f97373, #facc15, #34d399);
+            margin: -1.5rem -1.5rem 1.25rem;
+        }
+
+        .architecture {
+            margin: 4rem 0;
+            text-align: left;
+        }
+
+        .architecture h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .architecture p {
+            color: var(--text-muted);
+            max-width: 720px;
+        }
+
+        .arch-diagram {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .arch-layer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .arch-node {
+            min-width: 140px;
+            padding: 0.9rem 1.1rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--card-border);
+            background: var(--secondary-bg);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .arch-node.primary {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.35);
+        }
+
+        .arch-node.highlight {
+            border-color: var(--success-text);
+        }
+
+        .arch-node-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .arch-node-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .arch-arrow {
+            font-size: 1.4rem;
+            color: var(--text-muted);
         }
 
         .sandbox {
@@ -407,6 +502,14 @@
                 flex-direction: column;
                 align-items: stretch;
             }
+
+            .badge-row {
+                justify-content: center;
+            }
+
+            .arch-diagram {
+                align-items: stretch;
+            }
         }
 
     </style>
@@ -429,6 +532,15 @@
             <p class="subtitle">
                 Backend inteligente de alto rendimiento con integración nativa de Machine Learning y NLP.
             </p>
+            <p class="value-prop">
+                Con Aivio podés integrar modelos ML reales en segundos, sin escribir infraestructura de inferencia.
+            </p>
+            <div class="badge-row">
+                <img src="https://img.shields.io/badge/API-v1.0.0-8b5cf6?labelColor=111827&style=for-the-badge" alt="API Version v1">
+                <img src="https://img.shields.io/badge/docs-available-10b981?labelColor=111827&style=for-the-badge" alt="Docs disponibles">
+                <img src="https://img.shields.io/badge/stack-FastAPI%20%2B%20PyTorch-0ea5e9?labelColor=111827&style=for-the-badge" alt="Stack FastAPI + PyTorch">
+                <img src="https://img.shields.io/badge/deploy-Render%20Live-22c55e?labelColor=111827&style=for-the-badge" alt="Deploy en Render">
+            </div>
             <div>
                 <a href="/docs" class="btn">Explorar Documentación</a>
                 <a href="https://github.com/MateoDumas/Aivio" target="_blank" class="btn btn-outline">Ver Código</a>
@@ -491,6 +603,48 @@
             </div>
         </section>
 
+        <section class="architecture">
+            <h2>Arquitectura en una mirada</h2>
+            <p>
+                Aivio separa claramente el cliente, la capa de API, el motor de Machine Learning con PyTorch y la base de datos PostgreSQL, todo protegido con autenticación JWT y mejores prácticas de backend moderno.
+            </p>
+            <div class="arch-diagram">
+                <div class="arch-layer">
+                    <div class="arch-node">
+                        <div class="arch-node-title">Cliente</div>
+                        <div class="arch-node-sub">Web, Mobile, Postman, SDKs</div>
+                    </div>
+                    <div class="arch-arrow">➡</div>
+                    <div class="arch-node primary">
+                        <div class="arch-node-title">Aivio API</div>
+                        <div class="arch-node-sub">FastAPI + Rate Limiting + Docs</div>
+                    </div>
+                </div>
+                <div class="arch-layer">
+                    <div class="arch-node highlight">
+                        <div class="arch-node-title">ML Engine</div>
+                        <div class="arch-node-sub">PyTorch Recommendations & NLP</div>
+                    </div>
+                    <div class="arch-arrow">↔</div>
+                    <div class="arch-node">
+                        <div class="arch-node-title">PostgreSQL DB</div>
+                        <div class="arch-node-sub">Usuarios, historial y métricas</div>
+                    </div>
+                </div>
+                <div class="arch-layer">
+                    <div class="arch-node">
+                        <div class="arch-node-title">Auth & Security</div>
+                        <div class="arch-node-sub">JWT, OAuth2 Password Flow</div>
+                    </div>
+                    <div class="arch-arrow">⬑</div>
+                    <div class="arch-node">
+                        <div class="arch-node-title">Observabilidad</div>
+                        <div class="arch-node-sub">Health checks, headers y logs</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="quickstart">
             <h2>⚡ Quick Start for Developers</h2>
             <p>Consume la API directamente desde tu terminal o aplicación frontend.</p>
@@ -530,6 +684,7 @@ Body:
             <h2>🔎 IA Demo Snapshots</h2>
             <div class="demo-grid">
                 <div class="demo-card">
+                    <div class="screenshot-header"></div>
                     <h3>Chatbot Response</h3>
                     <div class="code-block">
                         <span class="code-comment">Response ejemplo de /chat</span>
@@ -545,6 +700,7 @@ Body:
                     </div>
                 </div>
                 <div class="demo-card">
+                    <div class="screenshot-header"></div>
                     <h3>Sentiment Analysis</h3>
                     <div class="code-block">
                         <span class="code-comment">Response ejemplo de /analysis/sentiment</span>
@@ -557,6 +713,7 @@ Body:
                     </div>
                 </div>
                 <div class="demo-card">
+                    <div class="screenshot-header"></div>
                     <h3>Recommender Prediction</h3>
                     <div class="code-block">
                         <span class="code-comment">Response ejemplo de /recommendations/predict</span>
