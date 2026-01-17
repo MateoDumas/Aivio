@@ -1,17 +1,31 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import random
 
 router = APIRouter()
 
 class ChatRequest(BaseModel):
-    message: str
-    context: str | None = None
+    message: str = Field(
+        ...,
+        description="Mensaje del usuario para el chatbot.",
+        example="Hola, ¿qué puedes hacer?",
+    )
+    context: str | None = Field(
+        default=None,
+        description="Contexto opcional de la conversación.",
+        example="landing_demo",
+    )
 
 class ChatResponse(BaseModel):
-    response: str
-    intent: str
-    suggested_actions: list[str]
+    response: str = Field(
+        ...,
+        example="¡Hola! Soy el asistente virtual de Aivio. Puedo ayudarte a explorar nuestra API de IA, generar recomendaciones o analizar textos. ¿Por dónde empezamos?",
+    )
+    intent: str = Field(..., example="greeting")
+    suggested_actions: list[str] = Field(
+        default_factory=list,
+        example=["¿Qué puedes hacer?", "Analizar sentimiento", "Recomendar productos"],
+    )
 
 @router.post("/", response_model=ChatResponse)
 async def chat_bot(payload: ChatRequest) -> ChatResponse:

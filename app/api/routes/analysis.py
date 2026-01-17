@@ -1,19 +1,23 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import re
 
 router = APIRouter()
 
 
 class AnalysisRequest(BaseModel):
-    text: str
+    text: str = Field(
+        ...,
+        description="Texto libre a analizar.",
+        example="Aivio hace que integrar IA en mi backend sea increíblemente fácil",
+    )
 
 
 class AnalysisResponse(BaseModel):
-    sentiment: str
-    confidence: float
-    keywords: list[str]
-    word_count: int
+    sentiment: str = Field(..., example="positive")
+    confidence: float = Field(..., example=0.93)
+    keywords: list[str] = Field(default_factory=list, example=["backend", "increíblemente"])
+    word_count: int = Field(..., example=9)
 
 
 def simple_sentiment_analysis(text: str) -> tuple[str, float]:

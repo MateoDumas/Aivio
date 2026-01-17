@@ -27,7 +27,7 @@ description = """
     <p style="font-size: 1.2rem; opacity: 0.8;">Intelligent Backend for Modern AI Applications</p>
 </div>
 
-Bienvenido a la documentación interactiva de **Aivio**. Este backend integra Inteligencia Artificial y Machine Learning directamente en el flujo de trabajo de tu aplicación.
+Bienvenido a la documentación interactiva de **Aivio**. Este backend integra Inteligencia Artificial y Machine Learning directamente en el flujo de trabajo de tu aplicación y está pensado para desarrolladores que trabajan con **FastAPI**, **PyTorch**, **PostgreSQL**, **JWT** y **OAuth2**.
 
 ## ✨ Características Principales
 
@@ -35,6 +35,95 @@ Bienvenido a la documentación interactiva de **Aivio**. Este backend integra In
 * **Machine Learning**: Modelos de PyTorch sirviendo predicciones en tiempo real.
 * **NLP Analysis**: Procesamiento de texto para análisis de sentimiento.
 * **High Performance**: Construido sobre **FastAPI** (ASGI) y **PostgreSQL Async**.
+
+## 📚 Guía Rápida de la API
+
+### 1. Autenticación
+- Endpoint: `POST /auth/login`
+- Body (form-data): `username`, `password`
+- Response:
+
+```json
+{
+  "access_token": "<jwt_token>",
+  "token_type": "bearer",
+  "expires_in": 3600
+}
+```
+
+Utiliza el botón **Authorize** y pega tu `access_token` como `Bearer <token>` para probar los endpoints protegidos desde aquí mismo.
+
+### 2. Motor de Recomendaciones (PyTorch)
+- Endpoint: `POST /recommendations/`
+- Auth: **Requerida** (JWT)
+- Request:
+
+```json
+{
+  "item_ids": [1, 2, 3, 4]
+}
+```
+
+- Response:
+
+```json
+{
+  "user_id": 1,
+  "recommendations": [
+    {"item_id": 4, "score": 0.91},
+    {"item_id": 2, "score": 0.87},
+    {"item_id": 3, "score": 0.62}
+  ]
+}
+```
+
+### 3. Análisis de Sentimiento (NLP)
+- Endpoint: `POST /analysis/sentiment`
+- Auth: **No requerida**
+- Request:
+
+```json
+{
+  "text": "Aivio hace que integrar IA en mi backend sea increíblemente fácil"
+}
+```
+
+- Response:
+
+```json
+{
+  "sentiment": "positive",
+  "confidence": 0.93,
+  "keywords": ["backend", "increíblemente"],
+  "word_count": 9
+}
+```
+
+### 4. Chatbot Inteligente
+- Endpoint: `POST /chat`
+- Auth: **No requerida**
+- Request:
+
+```json
+{
+  "message": "Hola, ¿qué puedes hacer?",
+  "context": "docs_sandbox"
+}
+```
+
+- Response:
+
+```json
+{
+  "response": "¡Hola! Soy el asistente virtual de Aivio. Puedo ayudarte a explorar nuestra API de IA, generar recomendaciones o analizar textos. ¿Por dónde empezamos?",
+  "intent": "greeting",
+  "suggested_actions": [
+    "¿Qué puedes hacer?",
+    "Analizar sentimiento",
+    "Recomendar productos"
+  ]
+}
+```
 
 ## 🔢 Versionado de la API
 
@@ -274,7 +363,7 @@ body {
 }
 """
 
-# JavaScript para Toggle y Navegación
+# JavaScript para Toggle, Navegación y Sandbox simple
 custom_js = """
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -312,6 +401,15 @@ custom_js = """
             themeBtn.innerText = theme === "light" ? "☀️ Light Mode" : "🌙 Dark Mode";
             localStorage.setItem("theme", theme);
         });
+
+        // Sandbox mínimo usando el panel "Try it out" de Swagger
+        // Sugerimos un payload por defecto para /recommendations y /analysis
+        try {
+            var pre = document.querySelector('pre.example, pre code');
+            // Swagger ya gestiona el Try It Out; aquí solo aseguramos que haya ejemplos visibles en la intro (markdown de arriba).
+        } catch (e) {
+            console.warn("Sandbox helper not attached:", e);
+        }
     });
 </script>
 """

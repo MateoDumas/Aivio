@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db
@@ -11,17 +11,24 @@ router = APIRouter()
 
 
 class RecommendationRequest(BaseModel):
-    item_ids: list[int]
+    item_ids: list[int] = Field(
+        ...,
+        description="Lista de IDs de items candidatos a recomendar.",
+        example=[1, 2, 3, 4],
+    )
 
 
 class RecommendationItem(BaseModel):
-    item_id: int
-    score: float
+    item_id: int = Field(..., example=42)
+    score: float = Field(..., example=0.87)
 
 
 class RecommendationResponse(BaseModel):
-    user_id: int
-    recommendations: list[RecommendationItem]
+    user_id: int = Field(..., example=1)
+    recommendations: list[RecommendationItem] = Field(
+        ...,
+        description="Lista ordenada de recomendaciones para el usuario.",
+    )
 
 
 @router.post("/", response_model=RecommendationResponse)
@@ -70,4 +77,3 @@ async def get_history(
         RecommendationItem(item_id=rec.item_id, score=rec.score)
         for rec in recommendations
     ]
-
