@@ -36,6 +36,13 @@ Bienvenido a la documentación interactiva de **Aivio**. Este backend integra In
 * **NLP Analysis**: Procesamiento de texto para análisis de sentimiento.
 * **High Performance**: Construido sobre **FastAPI** (ASGI) y **PostgreSQL Async**.
 
+## 🔢 Versionado de la API
+
+La versión pública actual es **v1**. 
+
+- Los endpoints estables viven en el espacio actual (`/auth`, `/recommendations`, `/analysis`, `/chat`).
+- Cambios incompatibles en el futuro se liberarán en un nuevo espacio de nombres (por ejemplo, `/v2/...`), manteniendo **v1** disponible durante un periodo de deprecación para facilitar migraciones.
+
 ---
 
 💡 **Tip:** Usa el botón **Authorize** con tus credenciales para probar los endpoints protegidos.

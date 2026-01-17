@@ -345,6 +345,42 @@
             margin-bottom: 0;
         }
 
+        .sandbox {
+            margin-top: 4rem;
+            text-align: left;
+        }
+
+        .sandbox h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .sandbox-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sandbox-input {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--card-border);
+            background: var(--secondary-bg);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .sandbox-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .sandbox-result {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1.5rem 1.25rem;
@@ -520,6 +556,32 @@ Body:
 }</span>
                     </div>
                 </div>
+                <div class="demo-card">
+                    <h3>Recommender Prediction</h3>
+                    <div class="code-block">
+                        <span class="code-comment">Response ejemplo de /recommendations/predict</span>
+                        <span class="code-command">{
+  "prediction": "item_42",
+  "confidence": 0.87
+}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="sandbox">
+            <h2>🧪 Sandbox: Try the Chatbot Live</h2>
+            <p class="subtitle" style="margin-bottom: 1rem; font-size: 1rem; max-width: 720px;">
+                Envía un mensaje directamente al endpoint <code>/chat</code> sin salir de la landing. 
+                Ideal para mostrar rápidamente el comportamiento de la API durante una demo.
+            </p>
+            <div class="sandbox-form">
+                <input id="sandbox-input" class="sandbox-input" type="text" placeholder="Ejemplo: Hola, ¿qué puedes hacer?" />
+                <button id="sandbox-button" class="btn" type="button">Enviar a /chat</button>
+            </div>
+            <div id="sandbox-result" class="code-block sandbox-result">
+                <span class="code-comment">// Response de /chat</span>
+                <span id="sandbox-json" class="code-command">{}</span>
             </div>
         </section>
     </div>
@@ -528,20 +590,58 @@ Body:
         document.addEventListener("DOMContentLoaded", function() {
             var btn = document.getElementById("theme-toggle");
             
-            // Check local storage
+            // Theme from local storage
             var currentTheme = localStorage.getItem("theme") || "dark";
             if (currentTheme === "light") {
                 document.body.classList.add("light-mode");
                 btn.innerText = "☀️ Light Mode";
             }
 
-            // Toggle Event
             btn.addEventListener("click", function() {
                 document.body.classList.toggle("light-mode");
                 var theme = document.body.classList.contains("light-mode") ? "light" : "dark";
                 btn.innerText = theme === "light" ? "☀️ Light Mode" : "🌙 Dark Mode";
                 localStorage.setItem("theme", theme);
             });
+
+            // Simple /chat sandbox
+            var sandboxInput = document.getElementById("sandbox-input");
+            var sandboxButton = document.getElementById("sandbox-button");
+            var sandboxResult = document.getElementById("sandbox-result");
+            var sandboxJson = document.getElementById("sandbox-json");
+
+            if (sandboxInput && sandboxButton && sandboxResult && sandboxJson) {
+                sandboxButton.addEventListener("click", function () {
+                    var message = sandboxInput.value.trim();
+                    if (!message) {
+                        sandboxJson.textContent = '{"error": "Escribe un mensaje antes de enviar."}';
+                        sandboxResult.style.display = "block";
+                        return;
+                    }
+
+                    sandboxButton.disabled = true;
+                    sandboxButton.textContent = "Enviando...";
+
+                    fetch("/chat", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({message: message, context: "landing_sandbox"})
+                    })
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        sandboxJson.textContent = JSON.stringify(data, null, 2);
+                        sandboxResult.style.display = "block";
+                    })
+                    .catch(function (err) {
+                        sandboxJson.textContent = '{"error": "No se pudo contactar el endpoint /chat."}';
+                        sandboxResult.style.display = "block";
+                    })
+                    .finally(function () {
+                        sandboxButton.disabled = false;
+                        sandboxButton.textContent = "Enviar a /chat";
+                    });
+                });
+            }
         });
     </script>
 </body>
