@@ -34,7 +34,47 @@ class UserRead(BaseModel):
         from_attributes = True
 
 
-@router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register",
+    response_model=UserRead,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        400: {
+            "description": "Solicitud inválida o email ya registrado.",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Email already registered"}
+                }
+            },
+        },
+        422: {
+            "description": "Error de validación en el cuerpo de la petición.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["body", "email"],
+                                "msg": "value is not a valid email address",
+                                "type": "value_error.email",
+                            }
+                        ]
+                    }
+                }
+            },
+        },
+        500: {
+            "description": "Error interno del servidor.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Internal server error. Please try again later."
+                    }
+                }
+            },
+        },
+    },
+)
 async def register(user_in: UserCreate, db: AsyncSession = Depends(get_db)) -> UserRead:
     result = await db.execute(select(User).where(User.email == user_in.email))
     user = result.scalar_one_or_none()
@@ -54,7 +94,54 @@ async def register(user_in: UserCreate, db: AsyncSession = Depends(get_db)) -> U
     return UserRead.model_validate(db_user)
 
 
-@router.post("/token", response_model=Token)
+@router.post(
+    "/token",
+    response_model=Token,
+    responses={
+        400: {
+            "description": "Credenciales inválidas.",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Incorrect username or password"}
+                }
+            },
+        },
+        401: {
+            "description": "No autorizado.",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Not authenticated"}
+                }
+            },
+        },
+        422: {
+            "description": "Error de validación en el formulario de login.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["body", "username"],
+                                "msg": "field required",
+                                "type": "value_error.missing",
+                            }
+                        ]
+                    }
+                }
+            },
+        },
+        500: {
+            "description": "Error interno del servidor.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Internal server error. Please try again later."
+                    }
+                }
+            },
+        },
+    },
+)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db),
@@ -77,4 +164,3 @@ async def login(
         expires_delta=access_token_expires,
     )
     return Token(access_token=access_token, token_type="bearer")
-

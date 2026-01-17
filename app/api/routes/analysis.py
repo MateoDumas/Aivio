@@ -58,7 +58,46 @@ def simple_sentiment_analysis(text: str) -> tuple[str, float]:
         return "neutral", 0.5
 
 
-@router.post("/sentiment", response_model=AnalysisResponse)
+@router.post(
+    "/sentiment",
+    response_model=AnalysisResponse,
+    responses={
+        400: {
+            "description": "Texto vacío o solicitud inválida.",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Text cannot be empty"}
+                }
+            },
+        },
+        422: {
+            "description": "Error de validación en el cuerpo de la petición.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["body", "text"],
+                                "msg": "field required",
+                                "type": "value_error.missing",
+                            }
+                        ]
+                    }
+                }
+            },
+        },
+        500: {
+            "description": "Error interno del servidor.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Internal server error. Please try again later."
+                    }
+                }
+            },
+        },
+    },
+)
 async def analyze_sentiment(payload: AnalysisRequest) -> AnalysisResponse:
     """
     Analiza el sentimiento de un texto dado.

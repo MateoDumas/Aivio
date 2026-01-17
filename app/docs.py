@@ -132,6 +132,34 @@ La versión pública actual es **v1**.
 - Los endpoints estables viven en el espacio actual (`/auth`, `/recommendations`, `/analysis`, `/chat`).
 - Cambios incompatibles en el futuro se liberarán en un nuevo espacio de nombres (por ejemplo, `/v2/...`), manteniendo **v1** disponible durante un periodo de deprecación para facilitar migraciones.
 
+## 🧪 Sandbox embebido
+
+En la esquina inferior derecha verás un panel **"Sandbox /chat"** que te permite enviar mensajes de prueba al endpoint `POST /chat` sin necesidad de herramientas externas. Es ideal para mostrar rápidamente cómo responde el chatbot de Aivio directamente desde esta página de documentación.
+
+## 🧰 SDKs y clientes generados
+
+A partir del archivo OpenAPI (`/openapi.json`) puedes generar SDKs oficiales usando herramientas como [OpenAPI Generator](https://openapi-generator.tech/).
+
+### JavaScript / TypeScript (Node)
+
+```bash
+npx @openapitools/openapi-generator-cli generate -i https://aivio-backend.onrender.com/openapi.json -g typescript-axios -o ./sdk/aivio-js
+```
+
+### Python
+
+```bash
+openapi-generator-cli generate -i https://aivio-backend.onrender.com/openapi.json -g python -o ./sdk/aivio-python
+```
+
+### cURL
+
+Puedes consumir cualquier endpoint directamente con `curl`, por ejemplo:
+
+```bash
+curl -X POST "https://aivio-backend.onrender.com/chat" -H "Content-Type: application/json" -d "{\"message\": \"Hola Aivio\", \"context\": \"sdk_example\"}"
+```
+
 ---
 
 💡 **Tip:** Usa el botón **Authorize** con tus credenciales para probar los endpoints protegidos.
@@ -363,38 +391,31 @@ body {
 }
 """
 
-# JavaScript para Toggle, Navegación y Sandbox simple
 custom_js = """
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Container for buttons
         var container = document.createElement("div");
         container.id = "custom-buttons";
         
-        // Back to Home Button
         var homeBtn = document.createElement("a");
         homeBtn.innerText = "⬅️ Back to Home";
         homeBtn.className = "custom-btn";
         homeBtn.href = "/";
         
-        // Theme Toggle Button
         var themeBtn = document.createElement("button");
         themeBtn.innerText = "🌙 Dark Mode";
         themeBtn.className = "custom-btn";
         
-        // Append buttons
         container.appendChild(homeBtn);
         container.appendChild(themeBtn);
         document.body.appendChild(container);
         
-        // Check local storage
         var currentTheme = localStorage.getItem("theme") || "dark";
         if (currentTheme === "light") {
             document.body.classList.add("light-mode");
             themeBtn.innerText = "☀️ Light Mode";
         }
 
-        // Toggle Event
         themeBtn.addEventListener("click", function() {
             document.body.classList.toggle("light-mode");
             var theme = document.body.classList.contains("light-mode") ? "light" : "dark";
@@ -402,14 +423,111 @@ custom_js = """
             localStorage.setItem("theme", theme);
         });
 
-        // Sandbox mínimo usando el panel "Try it out" de Swagger
-        // Sugerimos un payload por defecto para /recommendations y /analysis
-        try {
-            var pre = document.querySelector('pre.example, pre code');
-            // Swagger ya gestiona el Try It Out; aquí solo aseguramos que haya ejemplos visibles en la intro (markdown de arriba).
-        } catch (e) {
-            console.warn("Sandbox helper not attached:", e);
-        }
+        var sandbox = document.createElement("div");
+        sandbox.id = "docs-sandbox";
+        sandbox.style.position = "fixed";
+        sandbox.style.bottom = "20px";
+        sandbox.style.right = "20px";
+        sandbox.style.maxWidth = "360px";
+        sandbox.style.width = "90%";
+        sandbox.style.background = "var(--secondary-bg)";
+        sandbox.style.border = "1px solid var(--border-color)";
+        sandbox.style.borderRadius = "8px";
+        sandbox.style.padding = "12px 14px";
+        sandbox.style.boxShadow = "0 15px 30px rgba(0, 0, 0, 0.35)";
+        sandbox.style.zIndex = "9999";
+        sandbox.style.boxSizing = "border-box";
+
+        var sandboxTitle = document.createElement("div");
+        sandboxTitle.textContent = "Sandbox /chat";
+        sandboxTitle.style.fontWeight = "600";
+        sandboxTitle.style.fontSize = "14px";
+        sandboxTitle.style.marginBottom = "6px";
+
+        var sandboxSubtitle = document.createElement("div");
+        sandboxSubtitle.textContent = "Envía un mensaje rápido al chatbot sin salir de /docs.";
+        sandboxSubtitle.style.fontSize = "12px";
+        sandboxSubtitle.style.opacity = "0.8";
+        sandboxSubtitle.style.marginBottom = "8px";
+
+        var sandboxInput = document.createElement("input");
+        sandboxInput.type = "text";
+        sandboxInput.placeholder = "Ej: ¿Qué puedes hacer?";
+        sandboxInput.style.width = "100%";
+        sandboxInput.style.boxSizing = "border-box";
+        sandboxInput.style.padding = "6px 8px";
+        sandboxInput.style.marginBottom = "8px";
+        sandboxInput.style.borderRadius = "4px";
+        sandboxInput.style.border = "1px solid var(--border-color)";
+        sandboxInput.style.background = "var(--bg-color)";
+        sandboxInput.style.color = "var(--text-color)";
+
+        var sandboxButton = document.createElement("button");
+        sandboxButton.textContent = "Probar /chat";
+        sandboxButton.style.width = "100%";
+        sandboxButton.style.padding = "6px 8px";
+        sandboxButton.style.marginBottom = "8px";
+        sandboxButton.style.borderRadius = "4px";
+        sandboxButton.style.border = "1px solid var(--primary)";
+        sandboxButton.style.background = "var(--primary)";
+        sandboxButton.style.color = "#ffffff";
+        sandboxButton.style.cursor = "pointer";
+        sandboxButton.style.fontSize = "13px";
+
+        var sandboxResult = document.createElement("pre");
+        sandboxResult.style.display = "none";
+        sandboxResult.style.whiteSpace = "pre-wrap";
+        sandboxResult.style.wordBreak = "break-word";
+        sandboxResult.style.fontSize = "11px";
+        sandboxResult.style.maxHeight = "200px";
+        sandboxResult.style.overflow = "auto";
+        sandboxResult.style.background = "rgba(0, 0, 0, 0.35)";
+        sandboxResult.style.borderRadius = "4px";
+        sandboxResult.style.padding = "6px 8px";
+        sandboxResult.style.margin = "0";
+
+        sandbox.appendChild(sandboxTitle);
+        sandbox.appendChild(sandboxSubtitle);
+        sandbox.appendChild(sandboxInput);
+        sandbox.appendChild(sandboxButton);
+        sandbox.appendChild(sandboxResult);
+        document.body.appendChild(sandbox);
+
+        sandboxButton.addEventListener("click", function() {
+            var value = sandboxInput.value.trim();
+            if (!value) {
+                sandboxInput.focus();
+                return;
+            }
+            sandboxButton.disabled = true;
+            var originalText = sandboxButton.textContent;
+            sandboxButton.textContent = "Enviando...";
+            fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: value,
+                    context: "docs_sandbox"
+                })
+            })
+            .then(function(res) {
+                return res.json();
+            })
+            .then(function(data) {
+                sandboxResult.textContent = JSON.stringify(data, null, 2);
+                sandboxResult.style.display = "block";
+            })
+            .catch(function(err) {
+                sandboxResult.textContent = "Error: " + err;
+                sandboxResult.style.display = "block";
+            })
+            .finally(function() {
+                sandboxButton.disabled = false;
+                sandboxButton.textContent = originalText;
+            });
+        });
     });
 </script>
 """

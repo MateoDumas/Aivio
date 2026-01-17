@@ -27,7 +27,38 @@ class ChatResponse(BaseModel):
         example=["¿Qué puedes hacer?", "Analizar sentimiento", "Recomendar productos"],
     )
 
-@router.post("/", response_model=ChatResponse)
+@router.post(
+    "/",
+    response_model=ChatResponse,
+    responses={
+        422: {
+            "description": "Error de validación en el cuerpo de la petición.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["body", "message"],
+                                "msg": "field required",
+                                "type": "value_error.missing",
+                            }
+                        ]
+                    }
+                }
+            },
+        },
+        500: {
+            "description": "Error interno del servidor.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Internal server error. Please try again later."
+                    }
+                }
+            },
+        },
+    },
+)
 async def chat_bot(payload: ChatRequest) -> ChatResponse:
     """
     Chatbot simple capaz de responder preguntas sobre la API y asistencia general.

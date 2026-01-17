@@ -31,7 +31,46 @@ class RecommendationResponse(BaseModel):
     )
 
 
-@router.post("/", response_model=RecommendationResponse)
+@router.post(
+    "/",
+    response_model=RecommendationResponse,
+    responses={
+        401: {
+            "description": "No autorizado. Token JWT inválido o ausente.",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Not authenticated"}
+                }
+            },
+        },
+        422: {
+            "description": "Error de validación en el cuerpo de la petición.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["body", "item_ids"],
+                                "msg": "field required",
+                                "type": "value_error.missing",
+                            }
+                        ]
+                    }
+                }
+            },
+        },
+        500: {
+            "description": "Error interno del servidor.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Internal server error. Please try again later."
+                    }
+                }
+            },
+        },
+    },
+)
 async def recommend(
     payload: RecommendationRequest,
     db: AsyncSession = Depends(get_db),
@@ -54,7 +93,46 @@ async def recommend(
     return RecommendationResponse(user_id=current_user.id, recommendations=items)
 
 
-@router.get("/history", response_model=list[RecommendationItem])
+@router.get(
+    "/history",
+    response_model=list[RecommendationItem],
+    responses={
+        401: {
+            "description": "No autorizado. Token JWT inválido o ausente.",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Not authenticated"}
+                }
+            },
+        },
+        422: {
+            "description": "Error de validación en los parámetros de consulta.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["query", "limit"],
+                                "msg": "value is not a valid integer",
+                                "type": "type_error.integer",
+                            }
+                        ]
+                    }
+                }
+            },
+        },
+        500: {
+            "description": "Error interno del servidor.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Internal server error. Please try again later."
+                    }
+                }
+            },
+        },
+    },
+)
 async def get_history(
     limit: int = 10,
     db: AsyncSession = Depends(get_db),
