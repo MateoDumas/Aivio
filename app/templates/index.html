@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aivio API es un backend inteligente con FastAPI, PyTorch y PostgreSQL para recomendaciones, NLP y chatbots listos para producción.">
+    <meta name="keywords" content="Aivio, FastAPI, PyTorch, Machine Learning API, NLP, backend inteligente">
+    <meta name="author" content="Mateo Dumas">
+    <meta property="og:title" content="Aivio API - Intelligent Backend">
+    <meta property="og:description" content="Backend inteligente de alto rendimiento con integración nativa de Machine Learning y NLP.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aivio-backend.onrender.com/">
+    <meta property="og:image" content="https://aivio-backend.onrender.com/favicon.svg">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Aivio API - Intelligent Backend">
+    <meta name="twitter:description" content="Backend inteligente con FastAPI + PyTorch para recomendaciones, NLP y chatbots.">
     <title>Aivio API - Intelligent Backend</title>
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
     <style>
@@ -77,6 +88,15 @@
 
         header {
             padding: 6rem 0 4rem;
+        }
+
+        .logo-container {
+            margin-bottom: 2rem;
+        }
+
+        .logo-img {
+            width: 120px;
+            height: 120px;
         }
 
         h1 {
@@ -179,6 +199,33 @@
             margin-right: 0.5rem;
         }
 
+        .metrics {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .metric-item {
+            background: var(--secondary-bg);
+            border-radius: 1rem;
+            border: 1px solid var(--card-border);
+            padding: 1rem 1.5rem;
+            min-width: 200px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
         #quickstart {
             text-align: left;
             background: var(--secondary-bg);
@@ -218,6 +265,114 @@
             display: block;
         }
 
+        .workflow {
+            margin: 4rem 0;
+            text-align: left;
+        }
+
+        .workflow h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .step-card {
+            background: var(--secondary-bg);
+            border-radius: 1rem;
+            border: 1px solid var(--card-border);
+            padding: 1.5rem;
+        }
+
+        .step-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-number {
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .step-title {
+            margin: 0.3rem 0;
+            font-size: 1.1rem;
+        }
+
+        .step-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .demos {
+            margin-top: 4rem;
+            text-align: left;
+        }
+
+        .demos h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .demo-card {
+            background: var(--secondary-bg);
+            border-radius: 1rem;
+            border: 1px solid var(--card-border);
+            padding: 1.5rem;
+        }
+
+        .demo-card h3 {
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .demo-card .code-block {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1.25rem;
+            }
+
+            header {
+                padding: 4rem 0 3rem;
+            }
+
+            h1 {
+                font-size: 2.6rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 320px;
+            }
+
+            .metrics {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -243,6 +398,21 @@
                 <a href="https://github.com/MateoDumas/Aivio" target="_blank" class="btn btn-outline">Ver Código</a>
             </div>
         </header>
+
+        <section class="metrics">
+            <div class="metric-item">
+                <div class="metric-value">100+ req/s</div>
+                <div class="metric-label">Diseñada para alta concurrencia y baja latencia.</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">Multi-tenant</div>
+                <div class="metric-label">Lista para separar proyectos y espacios de clientes.</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">ML-first</div>
+                <div class="metric-label">Pensada para servir modelos de IA en producción.</div>
+            </div>
+        </section>
 
         <section class="features">
             <div class="card">
@@ -299,6 +469,57 @@
                 <span class="code-command">curl -X POST "https://aivio-backend.onrender.com/recommendations/predict" \
   -H "Content-Type: application/json" \
   -d '{"user_id": 1, "items": ["item_1", "item_2"]}'</span>
+            </div>
+
+            <div class="code-block">
+                <span class="code-comment"># 3. NLP Sentiment Analysis (no auth)</span>
+                <span class="code-command">curl -X POST "https://aivio-backend.onrender.com/analysis/sentiment" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Aivio hace que integrar IA en mi backend sea increíblemente fácil"}'</span>
+            </div>
+
+            <div class="code-block">
+                <span class="code-comment">// Postman example (Chatbot demo)</span>
+                <span class="code-command">POST https://aivio-backend.onrender.com/chat
+Headers: Content-Type: application/json
+Body:
+{
+  "message": "Hola, ¿qué puedes hacer?",
+  "context": "landing_demo"
+}</span>
+            </div>
+        </section>
+
+        <section class="demos">
+            <h2>🔎 IA Demo Snapshots</h2>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>Chatbot Response</h3>
+                    <div class="code-block">
+                        <span class="code-comment">Response ejemplo de /chat</span>
+                        <span class="code-command">{
+  "response": "¡Hola! Soy el asistente virtual de Aivio. Puedo ayudarte a explorar nuestra API de IA, generar recomendaciones o analizar textos. ¿Por dónde empezamos?",
+  "intent": "greeting",
+  "suggested_actions": [
+    "¿Qué puedes hacer?",
+    "Analizar sentimiento",
+    "Recomendar productos"
+  ]
+}</span>
+                    </div>
+                </div>
+                <div class="demo-card">
+                    <h3>Sentiment Analysis</h3>
+                    <div class="code-block">
+                        <span class="code-comment">Response ejemplo de /analysis/sentiment</span>
+                        <span class="code-command">{
+  "sentiment": "positive",
+  "confidence": 0.93,
+  "keywords": ["backend", "increíblemente"],
+  "word_count": 9
+}</span>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
